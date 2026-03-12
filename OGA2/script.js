@@ -107,25 +107,33 @@ window.addEventListener("load", async () => {
 
   // --- NEW: AUTO-CROP LOGIC ---
   videoEl.addEventListener('loadedmetadata', () => {
-    if (!videoPlane) return;
-    
-    const videoWidth = videoEl.videoWidth;
-    const videoHeight = videoEl.videoHeight;
-    const aspectRatio = videoWidth / videoHeight;
 
-    // We are fitting the video into a 1:1 square plane
-    if (aspectRatio > 1) { 
-      // HORIZONTAL (e.g., 16:9): Crop the left and right edges
-      const repeatX = 1 / aspectRatio; 
-      const offsetX = (1 - repeatX) / 2;
-      videoPlane.setAttribute('material', `repeat: ${repeatX} 1; offset: ${offsetX} 0`);
-    } else {
-      // VERTICAL (e.g., 9:16): Crop the top and bottom edges
-      const repeatY = aspectRatio; 
-      const offsetY = (1 - repeatY) / 2;
-      videoPlane.setAttribute('material', `repeat: 1 ${repeatY}; offset: 0 ${offsetY}`);
-    }
-  });
+  if (!videoPlane) return;
+
+  const vw = videoEl.videoWidth;
+  const vh = videoEl.videoHeight;
+
+  const aspect = vw / vh;
+
+  // marker is square
+  const markerSize = 1;
+
+  // keep width same as marker
+  const planeWidth = markerSize;
+
+  // adjust height based on video ratio
+  const planeHeight = markerSize / aspect;
+
+  videoPlane.setAttribute("width", planeWidth);
+  videoPlane.setAttribute("height", planeHeight);
+
+  // no crop
+  videoPlane.setAttribute(
+    "material",
+    "src: #driveVideo; side: double; transparent: true"
+  );
+
+});
 
   sceneEl.addEventListener("arReady", () => {
     if (curtain) {
